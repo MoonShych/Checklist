@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Checklist - จัดการงานประจำวัน</title>
+
+<!-- PWA -->
+<meta name="theme-color" content="#4A90E2">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Checklist">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192x192.png">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================== APP ROOT ===================== -->
+<div id="app">
+
+  <!-- ===================== HOME PAGE ===================== -->
+  <section class="page" id="page-home" data-page="home">
+    <header class="page-header home-header">
+      <div class="home-header-top">
+        <div class="home-date">
+          <p class="home-date-day" id="homeDateDay">วันจันทร์</p>
+          <h1 class="home-date-full" id="homeDateFull">3 สิงหาคม 2569</h1>
+        </div>
+        <div class="streak-badge" id="streakBadge">
+          <span class="streak-flame">🔥</span>
+          <span class="streak-count" id="streakCount">0</span>
+        </div>
+      </div>
+
+      <div class="home-summary-card card">
+        <div class="summary-row">
+          <div class="summary-stat">
+            <span class="summary-stat-value" id="summaryDoneCount">0</span>
+            <span class="summary-stat-label">ทำแล้ว</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <span class="summary-stat-value" id="summaryTotalCount">0</span>
+            <span class="summary-stat-label">ทั้งหมดวันนี้</span>
+          </div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="homeProgressFill" style="width:0%"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="search-bar-wrap">
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none"><path d="M21 21L15.5 15.5M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="homeSearchInput" placeholder="ค้นหารายการ...">
+      </div>
+    </div>
+
+    <div class="category-filter-wrap">
+      <div class="category-filter" id="homeCategoryFilter">
+        <!-- category chips injected by JS -->
+      </div>
+    </div>
+
+    <div class="checklist-scroll" id="homeChecklistScroll">
+      <ul class="checklist-list" id="homeChecklistList">
+        <!-- items injected by JS -->
+      </ul>
+      <div class="empty-state" id="homeEmptyState" hidden>
+        <div class="empty-state-icon">📋</div>
+        <p class="empty-state-title">ไม่มีรายการวันนี้</p>
+        <p class="empty-state-sub">แตะเมนู "➕ เพิ่ม" ด้านล่างเพื่อสร้างรายการใหม่</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CALENDAR PAGE ===================== -->
+  <section class="page" id="page-calendar" data-page="calendar">
+    <header class="page-header">
+      <h1 class="page-title">ปฏิทิน</h1>
+    </header>
+
+    <div class="calendar-nav card">
+      <button class="cal-nav-btn" id="calPrevBtn" aria-label="เดือนก่อนหน้า">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="cal-month-label" id="calMonthLabel">สิงหาคม 2569</span>
+      <button class="cal-nav-btn" id="calNextBtn" aria-label="เดือนถัดไป">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="calendar-card card">
+      <div class="calendar-weekdays">
+        <span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span><span>อา</span>
+      </div>
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- day cells injected by JS -->
+      </div>
+    </div>
+
+    <div class="cal-selected-day-wrap">
+      <h2 class="cal-selected-day-title" id="calSelectedDayTitle">รายการวันนี้</h2>
+      <ul class="checklist-list" id="calChecklistList">
+        <!-- items injected by JS -->
+      </ul>
+      <div class="empty-state" id="calEmptyState" hidden>
+        <div class="empty-state-icon">🗓️</div>
+        <p class="empty-state-title">ไม่มีรายการในวันนี้</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ADD PAGE ===================== -->
+  <section class="page" id="page-add" data-page="add">
+    <header class="page-header">
+      <h1 class="page-title" id="addPageTitle">เพิ่มรายการ</h1>
+    </header>
+
+    <form class="add-form" id="addForm">
+      <div class="form-group">
+        <label class="form-label" for="itemNameInput">ชื่อรายการ</label>
+        <input class="form-input" type="text" id="itemNameInput" placeholder="เช่น ดื่มน้ำ 8 แก้ว" required maxlength="60">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">หมวดหมู่</label>
+        <div class="category-picker" id="categoryPicker">
+          <!-- category chips injected by JS -->
+        </div>
+        <button type="button" class="link-btn" id="manageCategoryBtn">⚙️ จัดการหมวดหมู่</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="itemDescInput">รายละเอียด (ไม่บังคับ)</label>
+        <textarea class="form-input form-textarea" id="itemDescInput" placeholder="รายละเอียดเพิ่มเติม..." maxlength="200"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">กำหนดการ</label>
+        <div class="schedule-type-grid">
+          <button type="button" class="schedule-type-btn active" data-schedule-type="once">
+            <span class="schedule-type-icon">📌</span><span>ครั้งเดียว</span>
+          </button>
+          <button type="button" class="schedule-type-btn" data-schedule-type="daily">
+            <span class="schedule-type-icon">☀️</span><span>ทุกวัน</span>
+          </button>
+          <button type="button" class="schedule-type-btn" data-schedule-type="weekly">
+            <span class="schedule-type-icon">📆</span><span>วันในสัปดาห์</span>
+          </button>
+          <button type="button" class="schedule-type-btn" data-schedule-type="monthly">
+            <span class="schedule-type-icon">🗓️</span><span>วันที่ในเดือน</span>
+          </button>
+        </div>
+
+        <div class="schedule-detail" id="scheduleDetailOnce">
+          <input class="form-input" type="date" id="onceDateInput">
+        </div>
+
+        <div class="schedule-detail" id="scheduleDetailWeekly" hidden>
+          <div class="weekday-picker" id="weekdayPicker">
+            <button type="button" class="weekday-chip" data-day="1">จ</button>
+            <button type="button" class="weekday-chip" data-day="2">อ</button>
+            <button type="button" class="weekday-chip" data-day="3">พ</button>
+            <button type="button" class="weekday-chip" data-day="4">พฤ</button>
+            <button type="button" class="weekday-chip" data-day="5">ศ</button>
+            <button type="button" class="weekday-chip" data-day="6">ส</button>
+            <button type="button" class="weekday-chip" data-day="0">อา</button>
+          </div>
+        </div>
+
+        <div class="schedule-detail" id="scheduleDetailMonthly" hidden>
+          <div class="monthday-picker" id="monthdayPicker">
+            <!-- 1-31 buttons injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="saveItemBtn">บันทึก</button>
+      <button type="button" class="btn-secondary" id="cancelEditBtn" hidden>ยกเลิกการแก้ไข</button>
+    </form>
+  </section>
+
+  <!-- ===================== STATISTICS PAGE ===================== -->
+  <section class="page" id="page-stats" data-page="stats">
+    <header class="page-header">
+      <h1 class="page-title">สถิติ</h1>
+    </header>
+
+    <div class="stats-month-nav card">
+      <button class="cal-nav-btn" id="statsPrevBtn" aria-label="เดือนก่อนหน้า">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="cal-month-label" id="statsMonthLabel">สิงหาคม 2569</span>
+      <button class="cal-nav-btn" id="statsNextBtn" aria-label="เดือนถัดไป">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="stats-summary-row">
+      <div class="stats-summary-card card">
+        <span class="stats-summary-value" id="statsTotalValue">0</span>
+        <span class="stats-summary-label">ทั้งหมด</span>
+      </div>
+      <div class="stats-summary-card card">
+        <span class="stats-summary-value stats-value-done" id="statsDoneValue">0</span>
+        <span class="stats-summary-label">ทำแล้ว</span>
+      </div>
+      <div class="stats-summary-card card">
+        <span class="stats-summary-value stats-value-pending" id="statsPendingValue">0</span>
+        <span class="stats-summary-label">ค้าง</span>
+      </div>
+    </div>
+
+    <div class="chart-card card">
+      <div class="chart-toggle">
+        <button class="chart-toggle-btn active" data-chart-type="pie">Pie</button>
+        <button class="chart-toggle-btn" data-chart-type="bar">Bar</button>
+      </div>
+      <div class="chart-canvas-wrap">
+        <svg id="statsChartSvg" viewBox="0 0 200 200" class="chart-svg"></svg>
+      </div>
+      <div class="chart-legend" id="statsChartLegend">
+        <!-- legend injected by JS -->
+      </div>
+    </div>
+
+    <div class="stats-category-list" id="statsCategoryList">
+      <!-- per-category breakdown injected by JS -->
+    </div>
+  </section>
+
+  <!-- ===================== SETTINGS PAGE ===================== -->
+  <section class="page" id="page-settings" data-page="settings">
+    <header class="page-header">
+      <h1 class="page-title">ตั้งค่า</h1>
+    </header>
+
+    <div class="settings-list">
+
+      <div class="settings-group card">
+        <p class="settings-group-title">การแสดงผลกราฟ</p>
+        <div class="settings-row">
+          <span>รูปแบบกราฟเริ่มต้น</span>
+          <div class="segmented" id="settingsChartTypeSeg">
+            <button type="button" class="segmented-btn active" data-chart-type="pie">Pie</button>
+            <button type="button" class="segmented-btn" data-chart-type="bar">Bar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group card">
+        <button type="button" class="settings-row settings-row-btn" id="settingsManageCategoryBtn">
+          <span>🎨 จัดการหมวดหมู่</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="settings-group card">
+        <div class="settings-row">
+          <span>🔊 เสียงเอฟเฟกต์</span>
+          <label class="switch">
+            <input type="checkbox" id="settingsSoundToggle" checked>
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-group card">
+        <button type="button" class="settings-row settings-row-btn settings-row-danger" id="settingsClearDataBtn">
+          <span>🗑️ ล้างข้อมูลทั้งหมด</span>
+        </button>
+      </div>
+
+      <div class="settings-group card">
+        <p class="settings-group-title">เกี่ยวกับแอป</p>
+        <div class="settings-row">
+          <span>ชื่อแอป</span>
+          <span class="settings-value">Checklist</span>
+        </div>
+        <div class="settings-row">
+          <span>เวอร์ชัน</span>
+          <span class="settings-value">1.0.0</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- ===================== BOTTOM NAVIGATION ===================== -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" data-nav="home">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">หน้าแรก</span>
+  </button>
+  <button class="nav-item" data-nav="calendar">
+    <span class="nav-icon">📅</span>
+    <span class="nav-label">ปฏิทิน</span>
+  </button>
+  <button class="nav-item" data-nav="add">
+    <span class="nav-icon">➕</span>
+    <span class="nav-label">เพิ่ม</span>
+  </button>
+  <button class="nav-item" data-nav="stats">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">สถิติ</span>
+  </button>
+  <button class="nav-item" data-nav="settings">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">ตั้งค่า</span>
+  </button>
+  <span class="nav-indicator" id="navIndicator"></span>
+</nav>
+
+<!-- ===================== SHARED MODALS ===================== -->
+
+<!-- Category management modal -->
+<div class="modal-overlay" id="categoryModalOverlay" hidden>
+  <div class="modal-sheet" id="categoryModal">
+    <div class="modal-handle"></div>
+    <h2 class="modal-title">จัดการหมวดหมู่</h2>
+
+    <ul class="category-manage-list" id="categoryManageList">
+      <!-- categories injected by JS -->
+    </ul>
+
+    <div class="category-add-row">
+      <input type="text" class="form-input" id="newCategoryNameInput" placeholder="ชื่อหมวดหมู่ใหม่" maxlength="20">
+      <input type="color" id="newCategoryColorInput" value="#4A90E2">
+      <button type="button" class="btn-primary btn-small" id="addCategoryBtn">เพิ่ม</button>
+    </div>
+
+    <button type="button" class="btn-secondary" id="closeCategoryModalBtn">ปิด</button>
+  </div>
+</div>
+
+<!-- Confirm dialog (generic) -->
+<div class="modal-overlay" id="confirmDialogOverlay" hidden>
+  <div class="confirm-dialog" id="confirmDialog">
+    <p class="confirm-dialog-title" id="confirmDialogTitle">ยืนยันการลบ</p>
+    <p class="confirm-dialog-msg" id="confirmDialogMsg">คุณต้องการลบรายการนี้ใช่หรือไม่?</p>
+    <div class="confirm-dialog-actions">
+      <button type="button" class="btn-secondary" id="confirmDialogCancelBtn">ยกเลิก</button>
+      <button type="button" class="btn-danger" id="confirmDialogOkBtn">ลบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="js/sound.js"></script>
+<script src="js/animation.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
