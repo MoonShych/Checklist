@@ -114,9 +114,10 @@ const AnimationManager = (() => {
    * @param {number} totalTabs
    */
   function animateNavIndicator(indicatorEl, index, totalTabs) {
-    const percent = (100 / totalTabs) * index;
-    indicatorEl.style.transform = `translateX(${percent}%)`;
-    // scale percent string, width is fixed by CSS (100/totalTabs)%
+    // translateX(%) is based on the element's OWN width, not parent's.
+    // Since width = 100/totalTabs % of parent (== width of one tab slot),
+    // moving by 100% per index aligns perfectly.
+    indicatorEl.style.transform = `translateX(${index * 100}%)`;
     indicatorEl.style.width = `${100 / totalTabs}%`;
   }
 

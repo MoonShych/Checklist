@@ -1160,12 +1160,18 @@ svg { display: block; width: 20px; height: 20px; }
 .nav-indicator {
   position: absolute;
   top: 0;
+  left: 0;
+
   height: 3px;
   width: 20%;
+
   background: var(--color-primary);
   border-radius: 0 0 4px 4px;
-  transition: transform var(--dur-base) var(--ease-standard);
-  transform: translateX(0);
+
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+
+  pointer-events: none;
 }
 
 /* ---------- 12. MODALS ---------- */
