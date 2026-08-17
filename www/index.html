@@ -16,6 +16,72 @@
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192x192.png">
 
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+/* ปรับเฉพาะปุ่ม "ออกจากการทดลองใช้งาน" */
+.settings-row-danger {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.exit-trial-link {
+  width: 100%;
+  min-height: 68px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: inherit;
+  transition: transform .18s ease, background .18s ease;
+}
+
+.exit-trial-link:active {
+  transform: scale(.98);
+}
+
+.exit-trial-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 22px;
+  background: rgba(220, 70, 70, .12);
+}
+
+.exit-trial-text {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.exit-trial-text strong {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.exit-trial-text small {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: .58;
+  line-height: 1.25;
+}
+
+.exit-trial-arrow {
+  font-size: 27px;
+  line-height: 1;
+  opacity: .45;
+  margin-left: 4px;
+}
+</style>
 </head>
 <body>
 
@@ -271,23 +337,20 @@
         </div>
       </div>
 
-      <div class="settings-group card">
+ <div class="settings-group card">
         <button type="button" class="settings-row settings-row-btn settings-row-danger" id="settingsClearDataBtn">
-          <a href="/index.html">ออกจากการทดลองใช้งาน</a>
+          <a href="/index.html" class="exit-trial-link" aria-label="ออกจากการทดลองใช้งาน">
+            <span class="exit-trial-icon">↩</span>
+            <span class="exit-trial-text">
+              <strong>ออกจากการทดลองใช้งาน</strong>
+              <small>กลับไปยังหน้าเริ่มต้น</small>
+            </span>
+            <span class="exit-trial-arrow">›</span>
+          </a>
         </button>
       </div>
 
-      <div class="settings-group card">
-        <p class="settings-group-title">เกี่ยวกับแอป</p>
-        <div class="settings-row">
-          <span>ชื่อแอป</span>
-          <span class="settings-value">Checklist</span>
-        </div>
-        <div class="settings-row">
-          <span>เวอร์ชัน</span>
-          <span class="settings-value">1.0.0</span>
-        </div>
-      </div>
+
 
     </div>
   </section>
